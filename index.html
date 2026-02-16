@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Zyra</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #f4f4f8;
+  --white:   #ffffff;
+  --accent:  #7c3aed;
+  --accent2: #a78bfa;
+  --alight:  #ede9fe;
+  --text:    #111827;
+  --muted:   #6b7280;
+  --border:  #e5e7eb;
+  --green:   #10b981;
+  --gbg:     #d1fae5;
+  --gold:    #f59e0b;
+  --ybg:     #fef3c7;
+  --red:     #ef4444;
+  --rbg:     #fee2e2;
+  --shadow:  0 1px 4px rgba(0,0,0,0.08);
+  --r:       14px;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:#e8e8f0;
+  display:flex; justify-content:center; align-items:flex-start;
+  min-height:100vh;
+}
+
+/* ── PHONE SHELL ── */
+.phone {
+  width:390px; min-height:844px;
+  background:var(--bg);
+  display:flex; flex-direction:column;
+  position:relative;
+  box-shadow: 0 0 60px rgba(0,0,0,0.2);
+  overflow:hidden;
+}
+@media(max-width:420px){ .phone{ width:100vw; } }
+
+/* ── TOPBAR ── */
+.topbar {
+  background:var(--white);
+  border-bottom:1px solid var(--border);
+  padding:14px 16px;
+  display:flex; align-items:center; gap:10px;
+  position:sticky; top:0; z-index:50;
+}
+.logo-mark {
+  width:30px; height:30px; border-radius:8px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-weight:800; font-size:13px; flex-shrink:0;
+}
+.logo-text {
+  font-weight:800; font-size:17px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.top-search {
+  flex:1; background:var(--bg); border:1px solid var(--border);
+  border-radius:8px; padding:7px 10px; font-size:12px;
+  color:var(--muted); display:flex; align-items:center; gap:6px;
+}
+.top-right { display:flex; align-items:center; gap:8px; margin-left:4px; }
+.av-sm { width:30px; height:30px; border-radius:50%; overflow:hidden; border:2px solid var(--border); flex-shrink:0; }
+.av-sm img { width:100%; height:100%; object-fit:cover; }
+
+/* ── SCREENS ── */
+.screen { display:none; flex-direction:column; flex:1; overflow-y:auto; padding-bottom:80px; animation:fadeIn .2s ease; }
+.screen.active { display:flex; }
+@keyframes fadeIn{ from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── BOTTOM NAV ── */
+.nav {
+  position:fixed; bottom:0; width:390px;
+  background:var(--white); border-top:1px solid var(--border);
+  display:flex; padding:8px 0 16px; z-index:100;
+}
+@media(max-width:420px){ .nav{ width:100vw; } }
+.nav-item {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  gap:3px; cursor:pointer; color:var(--muted); font-size:10px;
+  font-weight:500; padding:4px 0; transition:color .15s;
+}
+.nav-item.active { color:var(--accent); }
+.nav-item svg { width:20px; height:20px; }
+
+/* ── SECTION HEADER ── */
+.pg-head { padding:18px 16px 12px; }
+.pg-title { font-size:22px; font-weight:800; }
+.pg-sub   { font-size:12px; color:var(--muted); margin-top:2px; }
+.pg-row   { display:flex; justify-content:space-between; align-items:center; }
+
+/* ── BUTTONS ── */
+.btn-primary {
+  display:flex; align-items:center; gap:5px;
+  background:var(--accent); color:#fff; border:none;
+  border-radius:8px; padding:8px 13px; font-size:12px;
+  font-weight:600; cursor:pointer; font-family:inherit; white-space:nowrap;
+}
+.btn-secondary {
+  background:none; border:1px solid var(--border); border-radius:8px;
+  padding:8px 13px; font-size:12px; font-weight:500; cursor:pointer;
+  font-family:inherit; color:var(--text);
+}
+
+/* ── CARDS ── */
+.card {
+  background:var(--white); border-radius:var(--r);
+  box-shadow:var(--shadow); border:1px solid var(--border);
+}
+
+/* ── DASHBOARD ── */
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 16px; margin-bottom:14px; }
+.stat-card { background:var(--white); border-radius:12px; border:1px solid var(--border); padding:14px; box-shadow:var(--shadow); }
+.stat-lbl  { font-size:11px; color:var(--muted); font-weight:500; margin-bottom:6px; }
+.stat-num  { font-size:24px; font-weight:800; line-height:1; }
+.stat-det  { font-size:10px; color:var(--muted); margin-top:4px; }
+.stat-icon { float:right; color:var(--muted); }
+.stat-icon svg { width:16px; height:16px; }
+
+.chart-card { background:var(--white); border-radius:var(--r); border:1px solid var(--border); box-shadow:var(--shadow); margin:0 16px 14px; padding:16px; }
+.chart-title { font-size:13px; font-weight:700; margin-bottom:14px; }
+
+/* Bar chart */
+.bars { display:flex; align-items:flex-end; gap:8px; height:100px; position:relative; }
+.bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
+.bar-fill { width:100%; background:var(--accent); border-radius:4px 4px 0 0; min-height:2px; }
+.bar-lbl { font-size:9px; color:var(--muted); }
+
+/* Pie */
+.pie-row { display:flex; align-items:center; gap:16px; }
+.pie-legend { display:flex; flex-direction:column; gap:6px; }
+.leg { display:flex; align-items:center; gap:6px; font-size:11px; }
+.leg-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+/* Notifs */
+.notif-list { display:flex; flex-direction:column; padding:0 16px; gap:8px; margin-bottom:14px; }
+.notif-card { background:var(--white); border-radius:var(--r); border:1px solid var(--border); box-shadow:var(--shadow); padding:14px; }
+.notif-head { font-size:13px; font-weight:700; margin-bottom:2px; }
+.notif-sub  { font-size:11px; color:var(--muted); margin-bottom:10px; }
+.notif-item { display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
+.notif-item:last-child { border-bottom:none; }
+.notif-ico { width:32px; height:32px; border-radius:8px; background:var(--alight); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.notif-ico svg { width:14px; height:14px; color:var(--accent); }
+.notif-ico img { width:32px; height:32px; border-radius:8px; object-fit:cover; }
+.notif-txt { flex:1; font-size:12px; line-height:1.5; }
+.notif-txt b { font-weight:600; }
+.notif-time { font-size:10px; color:var(--muted); margin-top:2px; }
+
+/* ── PROYECTOS ── */
+.tabs { display:flex; gap:0; margin:0 16px 14px; background:var(--white); border:1px solid var(--border); border-radius:8px; padding:3px; overflow-x:auto; }
+.tab { padding:5px 12px; border-radius:6px; font-size:11px; font-weight:500; cursor:pointer; color:var(--muted); white-space:nowrap; flex-shrink:0; }
+.tab.active { background:var(--white); color:var(--text); font-weight:700; box-shadow:var(--shadow); border:1px solid var(--border); }
+
+.proj-list { display:flex; flex-direction:column; gap:12px; padding:0 16px; }
+.proj-card { background:var(--white); border-radius:var(--r); overflow:hidden; border:1px solid var(--border); box-shadow:var(--shadow); cursor:pointer; }
+.proj-img  { width:100%; height:140px; display:flex; align-items:center; justify-content:center; font-size:44px; position:relative; }
+.proj-chip { position:absolute; top:10px; right:10px; background:rgba(124,58,237,.9); color:#fff; font-size:10px; font-weight:700; padding:3px 10px; border-radius:99px; }
+.proj-body { padding:14px; }
+.proj-title { font-size:15px; font-weight:700; margin-bottom:8px; }
+.proj-avs  { display:flex; margin-bottom:8px; }
+.proj-av   { width:24px; height:24px; border-radius:50%; border:2px solid #fff; overflow:hidden; margin-right:-7px; background:var(--alight); font-size:9px; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--accent); }
+.proj-av img { width:100%; height:100%; object-fit:cover; }
+.proj-desc { font-size:12px; color:var(--muted); line-height:1.5; margin-bottom:12px; }
+.proj-btn  { width:100%; padding:8px; border:1px solid var(--border); border-radius:8px; background:none; font-size:12px; font-family:inherit; cursor:pointer; color:var(--text); font-weight:500; }
+
+/* ── GRUPOS ── */
+.grupo-list { display:flex; flex-direction:column; gap:10px; padding:0 16px; }
+.grupo-card { background:var(--white); border-radius:var(--r); border:1px solid var(--border); box-shadow:var(--shadow); padding:16px; }
+.grupo-head { display:flex; justify-content:space-between; align-items:center; }
+.grupo-title { font-size:14px; font-weight:700; }
+.dots-btn { background:none; border:none; cursor:pointer; color:var(--muted); font-size:18px; }
+.grupo-proj { font-size:11px; color:var(--muted); margin:4px 0 12px; }
+.grupo-proj a { color:var(--accent); font-weight:500; text-decoration:none; }
+.g-mem-lbl  { font-size:11px; font-weight:600; color:var(--muted); margin-bottom:6px; }
+.g-avs { display:flex; margin-bottom:12px; }
+.g-av  { width:32px; height:32px; border-radius:50%; border:2px solid #fff; overflow:hidden; margin-right:-8px; }
+.g-av img { width:100%; height:100%; object-fit:cover; }
+.grupo-date { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--muted); border-top:1px solid var(--border); padding-top:10px; }
+.grupo-date svg { width:12px; height:12px; }
+
+/* ── EMPLEADOS ── */
+.emp-list { display:flex; flex-direction:column; gap:8px; padding:0 16px; }
+.emp-card { background:var(--white); border-radius:var(--r); border:1px solid var(--border); box-shadow:var(--shadow); padding:14px; display:flex; align-items:center; gap:12px; }
+.emp-av  { width:46px; height:46px; border-radius:50%; overflow:hidden; flex-shrink:0; border:2px solid var(--border); }
+.emp-av img { width:100%; height:100%; object-fit:cover; }
+.emp-name  { font-size:14px; font-weight:700; margin-bottom:1px; }
+.emp-email { font-size:11px; color:var(--muted); margin-bottom:6px; }
+.role-chip { display:inline-block; padding:2px 9px; border-radius:99px; font-size:10px; font-weight:700; }
+.r-admin    { background:#ede9fe; color:#7c3aed; }
+.r-manager  { background:#fef3c7; color:#d97706; }
+.r-employee { background:#f3f4f6; color:#374151; border:1px solid #e5e7eb; }
+
+/* ── EVIDENCIAS ── */
+.ev-filter { display:flex; gap:6px; padding:0 16px 12px; overflow-x:auto; }
+.ev-f { padding:5px 12px; border-radius:99px; font-size:11px; font-weight:600; white-space:nowrap; cursor:pointer; border:1px solid var(--border); background:var(--white); color:var(--muted); }
+.ev-f.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+.ev-list { display:flex; flex-direction:column; gap:10px; padding:0 16px; }
+.ev-card { background:var(--white); border-radius:var(--r); border:1px solid var(--border); box-shadow:var(--shadow); overflow:hidden; cursor:pointer; }
+.ev-img  { width:100%; height:130px; display:flex; align-items:center; justify-content:center; font-size:44px; position:relative; }
+.ev-chip { position:absolute; top:8px; right:8px; padding:3px 10px; border-radius:99px; font-size:10px; font-weight:700; }
+.ev-chip.pendiente { background:#fef3c7; color:#b45309; }
+.ev-chip.aprobado  { background:#d1fae5; color:#065f46; }
+.ev-chip.rechazado { background:#fee2e2; color:#991b1b; }
+.ev-body  { padding:12px; }
+.ev-title { font-size:13px; font-weight:600; line-height:1.4; margin-bottom:6px; }
+.ev-meta  { font-size:11px; color:var(--muted); line-height:1.6; }
+.ev-meta span { color:var(--accent); font-weight:500; }
+
+/* ── MATERIALES ── */
+.mat-wrap { margin:0 16px; }
+.mat-card { background:var(--white); border-radius:var(--r); border:1px solid var(--border); box-shadow:var(--shadow); overflow:hidden; }
+.mat-head { padding:14px 16px; border-bottom:1px solid var(--border); }
+.mat-title { font-size:14px; font-weight:700; }
+.mat-sub   { font-size:11px; color:var(--muted); margin-top:2px; }
+.mat-sel-row { padding:10px 16px; border-bottom:1px solid var(--border); display:flex; gap:8px; align-items:center; }
+.mat-select {
+  flex:1; border:1px solid var(--border); border-radius:8px;
+  padding:8px 12px; font-size:12px; font-family:inherit;
+  color:var(--text); background:var(--bg); appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 10px center;
+}
+.mat-table-wrap { overflow-x:auto; }
+.mat-table { width:100%; min-width:340px; border-collapse:collapse; }
+.mat-table th { text-align:left; padding:10px 12px; font-size:11px; font-weight:600; color:var(--muted); border-bottom:1px solid var(--border); }
+.mat-table td { padding:10px 12px; font-size:12px; border-bottom:1px solid var(--border); }
+.mat-table tr:last-child td { border-bottom:none; }
+.mat-table tr:hover td { background:var(--bg); }
+.mat-input { border:none; background:none; font-family:inherit; font-size:12px; color:var(--text); width:100%; outline:none; }
+.mat-footer { padding:10px 16px; display:flex; justify-content:space-between; align-items:center; background:var(--bg); border-top:1px solid var(--border); }
+.mat-add-btn { display:flex; align-items:center; gap:4px; background:none; border:none; font-size:12px; color:var(--muted); cursor:pointer; font-family:inherit; }
+.btn-save { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:7px 14px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:4px; }
+.mat-empty { text-align:center; padding:36px 16px; color:var(--muted); font-size:13px; }
+
+/* Search bar */
+.search-row { padding:0 16px 12px; }
+.s-box { display:flex; align-items:center; gap:8px; background:var(--white); border:1px solid var(--border); border-radius:8px; padding:9px 12px; }
+.s-box input { border:none; background:none; outline:none; font-size:12px; font-family:inherit; color:var(--text); flex:1; }
+.s-box input::placeholder { color:var(--muted); }
+
+::-webkit-scrollbar { width:3px; height:3px; } ::-webkit-scrollbar-thumb { background:var(--border); border-radius:99px; }
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="logo-mark">Z</div>
+    <span class="logo-text">Zyra</span>
+    <div class="top-search">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Buscar...
+    </div>
+    <div class="top-right">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <div class="av-sm"><img src="https://i.pravatar.cc/80?img=47" alt=""></div>
+    </div>
+  </header>
+
+  <!-- ══ DASHBOARD ══ -->
+  <div class="screen active" id="screen-dashboard">
+    <div class="pg-head">
+      <div class="pg-title">Dashboard</div>
+      <div class="pg-sub">Visualiza y gestiona cada aspecto de tu operación.</div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-lbl">Proyectos Activos <span class="stat-icon" style="float:right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></span></div>
+        <div class="stat-num">2</div>
+        <div class="stat-det">de 4 proyectos totales</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-lbl">Recordatorios <span class="stat-icon" style="float:right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/></svg></span></div>
+        <div class="stat-num">2</div>
+        <div class="stat-det">3 recordatorios en total</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-lbl">Evidencias Hoy <span class="stat-icon" style="float:right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></span></div>
+        <div class="stat-num">+0</div>
+        <div class="stat-det">6 en total</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-lbl">Empleados Activos <span class="stat-icon" style="float:right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span></div>
+        <div class="stat-num">5</div>
+        <div class="stat-det">6 miembros en total</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">Evidencias por Semana</div>
+      <div class="bars">
+        <div class="bar-wrap"><div class="bar-fill" style="height:2px"></div><div class="bar-lbl">19/01</div></div>
+        <div class="bar-wrap"><div class="bar-fill" style="height:2px"></div><div class="bar-lbl">26/01</div></div>
+        <div class="bar-wrap"><div class="bar-fill" style="height:30px"></div><div class="bar-lbl">02/02</div></div>
+        <div class="bar-wrap"><div class="bar-fill" style="height:70px"></div><div class="bar-lbl">09/02</div></div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">Avance General de Obras</div>
+      <div class="pie-row">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <circle cx="55" cy="55" r="40" fill="none" stroke="#06b6d4" stroke-width="22" stroke-dasharray="188 63" stroke-dashoffset="0" transform="rotate(-90 55 55)"/>
+          <circle cx="55" cy="55" r="40" fill="none" stroke="#8b5cf6" stroke-width="22" stroke-dasharray="63 188" stroke-dashoffset="-188" transform="rotate(-90 55 55)"/>
+        </svg>
+        <div class="pie-legend">
+          <div class="leg"><div class="leg-dot" style="background:#06b6d4"></div><span>Completados (3)</span></div>
+          <div class="leg"><div class="leg-dot" style="background:#8b5cf6"></div><span>En progreso (1)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notif-list">
+      <div class="notif-card">
+        <div class="notif-head">Notificaciones Recientes</div>
+        <div class="notif-sub">Acciones recientes en el sistema.</div>
+        <div class="notif-item">
+          <div class="notif-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/></svg></div>
+          <div class="notif-txt"><b>Nuevo recordatorio:</b> "Entrega de reporte de avance".<br><span style="color:var(--muted)">Equipo de Mantenimiento</span></div>
+          <div class="notif-time">5 días</div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/></svg></div>
+          <div class="notif-txt"><b>Nuevo recordatorio:</b> "Revisión semanal de seguridad".<br><span style="color:var(--muted)">Equipo de Instalación A</span></div>
+          <div class="notif-time">7 días</div>
+        </div>
+        <div class="notif-item">
+          <div class="notif-ico" style="background:none;padding:0"><img src="https://i.pravatar.cc/80?img=29" alt=""></div>
+          <div class="notif-txt"><b>Mia Rodriguez</b> subió una nueva evidencia.<br><span style="color:var(--muted)">Renovación Torre Central</span></div>
+          <div class="notif-time">2h</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PROYECTOS ══ -->
+  <div class="screen" id="screen-proyectos">
+    <div class="pg-head">
+      <div class="pg-row">
+        <div><div class="pg-title">Proyectos</div><div class="pg-sub">Consulte el historial de proyectos.</div></div>
+        <button class="btn-primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nuevo</button>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab active">Activos</div>
+      <div class="tab">En espera</div>
+      <div class="tab">Completados</div>
+      <div class="tab">Todos</div>
+    </div>
+    <div class="proj-list">
+      <div class="proj-card">
+        <div class="proj-img" style="background:linear-gradient(135deg,#fbbf24,#92400e)">🏗️<span class="proj-chip">En progreso</span></div>
+        <div class="proj-body">
+          <div class="proj-title">Renovación Torre Central</div>
+          <div class="proj-avs">
+            <div class="proj-av"><img src="https://i.pravatar.cc/80?img=3" alt=""></div>
+            <div class="proj-av"><img src="https://i.pravatar.cc/80?img=47" alt=""></div>
+            <div class="proj-av"><img src="https://i.pravatar.cc/80?img=29" alt=""></div>
+          </div>
+          <div class="proj-desc">Renovación completa de la fachada y sistemas eléctricos de la torre principal del centro.</div>
+          <button class="proj-btn">Ver detalles</button>
+        </div>
+      </div>
+      <div class="proj-card">
+        <div class="proj-img" style="background:linear-gradient(135deg,#60a5fa,#1e3a8a)">🏘️<span class="proj-chip">En progreso</span></div>
+        <div class="proj-body">
+          <div class="proj-title">Instalación Complejo Residencial</div>
+          <div class="proj-avs">
+            <div class="proj-av"><img src="https://i.pravatar.cc/80?img=3" alt=""></div>
+            <div class="proj-av"><img src="https://i.pravatar.cc/80?img=47" alt=""></div>
+            <div class="proj-av"><img src="https://i.pravatar.cc/80?img=29" alt=""></div>
+          </div>
+          <div class="proj-desc">Instalación de paneles solares y sistemas de agua en 50 unidades residenciales.</div>
+          <button class="proj-btn">Ver detalles</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ GRUPOS ══ -->
+  <div class="screen" id="screen-grupos">
+    <div class="pg-head">
+      <div class="pg-row">
+        <div><div class="pg-title">Grupos</div><div class="pg-sub">Grupos de trabajo para tus proyectos.</div></div>
+        <button class="btn-primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nuevo</button>
+      </div>
+    </div>
+    <div class="search-row">
+      <div class="s-box">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input placeholder="Buscar grupo...">
+      </div>
+    </div>
+    <div class="grupo-list">
+      <div class="grupo-card">
+        <div class="grupo-head"><div class="grupo-title">Equipo de Instalación A</div><button class="dots-btn">⋮</button></div>
+        <div class="grupo-proj">Asignado a: <a href="#">Renovación Torre Central</a></div>
+        <div class="g-mem-lbl">Miembros:</div>
+        <div class="g-avs">
+          <div class="g-av"><img src="https://i.pravatar.cc/80?img=3" alt=""></div>
+          <div class="g-av"><img src="https://i.pravatar.cc/80?img=47" alt=""></div>
+          <div class="g-av"><img src="https://i.pravatar.cc/80?img=12" alt=""></div>
+        </div>
+        <div class="grupo-date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Creado el 30/9/2023</div>
+      </div>
+      <div class="grupo-card">
+        <div class="grupo-head"><div class="grupo-title">Equipo de Mantenimiento</div><button class="dots-btn">⋮</button></div>
+        <div class="grupo-proj">Asignado a: <a href="#">Mantenimiento Parque Oficinas</a></div>
+        <div class="g-mem-lbl">Miembros:</div>
+        <div class="g-avs">
+          <div class="g-av"><img src="https://i.pravatar.cc/80?img=52" alt=""></div>
+          <div class="g-av"><img src="https://i.pravatar.cc/80?img=15" alt=""></div>
+        </div>
+        <div class="grupo-date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Creado el 14/10/2023</div>
+      </div>
+      <div class="grupo-card">
+        <div class="grupo-head"><div class="grupo-title">Equipo de Revisión</div><button class="dots-btn">⋮</button></div>
+        <div class="grupo-proj" style="color:var(--muted)">Sin asignar a proyecto</div>
+        <div class="g-mem-lbl">Miembros:</div>
+        <div class="g-avs">
+          <div class="g-av"><img src="https://i.pravatar.cc/80?img=8" alt=""></div>
+          <div class="g-av"><img src="https://i.pravatar.cc/80?img=11" alt=""></div>
+        </div>
+        <div class="grupo-date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Creado el 31/10/2023</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ EMPLEADOS ══ -->
+  <div class="screen" id="screen-empleados">
+    <div class="pg-head">
+      <div class="pg-row">
+        <div><div class="pg-title">Empleados</div><div class="pg-sub">Gestiona los perfiles del equipo.</div></div>
+        <button class="btn-primary"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nuevo</button>
+      </div>
+    </div>
+    <div class="search-row">
+      <div class="s-box">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input placeholder="Buscar por nombre o correo...">
+      </div>
+    </div>
+    <div class="emp-list">
+      <div class="emp-card">
+        <div class="emp-av"><img src="https://i.pravatar.cc/80?img=3" alt=""></div>
+        <div><div class="emp-name">Alex Rivera</div><div class="emp-email">alex.rivera@example.com</div><span class="role-chip r-admin">Admin</span></div>
+      </div>
+      <div class="emp-card">
+        <div class="emp-av"><img src="https://i.pravatar.cc/80?img=5" alt=""></div>
+        <div><div class="emp-name">Samantha Chen</div><div class="emp-email">samantha.chen@example.com</div><span class="role-chip r-manager">Manager</span></div>
+      </div>
+      <div class="emp-card">
+        <div class="emp-av"><img src="https://i.pravatar.cc/80?img=47" alt=""></div>
+        <div><div class="emp-name">Leo Martinez</div><div class="emp-email">leo.martinez@example.com</div><span class="role-chip r-employee">Employee</span></div>
+      </div>
+      <div class="emp-card">
+        <div class="emp-av"><img src="https://i.pravatar.cc/80?img=29" alt=""></div>
+        <div><div class="emp-name">Mia Rodriguez</div><div class="emp-email">mia.rodriguez@example.com</div><span class="role-chip r-employee">Employee</span></div>
+      </div>
+      <div class="emp-card">
+        <div class="emp-av"><img src="https://i.pravatar.cc/80?img=52" alt=""></div>
+        <div><div class="emp-name">David Kim</div><div class="emp-email">david.kim@example.com</div><span class="role-chip r-employee">Employee</span></div>
+      </div>
+      <div class="emp-card">
+        <div class="emp-av"><img src="https://i.pravatar.cc/80?img=44" alt=""></div>
+        <div><div class="emp-name">Sofia Garcia</div><div class="emp-email">sofia.garcia@example.com</div><span class="role-chip r-employee">Employee</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ EVIDENCIAS ══ -->
+  <div class="screen" id="screen-evidencias">
+    <div class="pg-head">
+      <div class="pg-title">Evidencias Fotográficas</div>
+      <div class="pg-sub">Revise, apruebe o rechace las fotos subidas.</div>
+    </div>
+    <div class="ev-filter">
+      <div class="ev-f active">Todos</div>
+      <div class="ev-f">Pendiente</div>
+      <div class="ev-f">Aprobado</div>
+      <div class="ev-f">Rechazado</div>
+      <div class="ev-f">Guardado local</div>
+    </div>
+    <div class="ev-list">
+      <div class="ev-card">
+        <div class="ev-img" style="background:#fef9c3">🔧<span class="ev-chip pendiente">Pendiente</span></div>
+        <div class="ev-body"><div class="ev-title">Fuga detectada en tubería de desagüe del sótano. Se requiere acción correctiva.</div><div class="ev-meta">Proyecto: <span>Renovación Torre Central</span><br>Por: Mia Rodriguez · 14/2/2026</div></div>
+      </div>
+      <div class="ev-card">
+        <div class="ev-img" style="background:#fef3c7">⚡<span class="ev-chip aprobado">Aprobado</span></div>
+        <div class="ev-body"><div class="ev-title">Instalación de cuadro eléctrico principal finalizada en planta 3.</div><div class="ev-meta">Proyecto: <span>Renovación Torre Central</span><br>Por: Leo Martinez · 13/2/2026</div></div>
+      </div>
+      <div class="ev-card">
+        <div class="ev-img" style="background:#d1fae5">☀️<span class="ev-chip aprobado">Aprobado</span></div>
+        <div class="ev-body"><div class="ev-title">Paneles instalados y cableado final en unidad 12A.</div><div class="ev-meta">Proyecto: <span>Instalación Complejo Residencial</span><br>Por: Leo Martinez · 12/2/2026</div></div>
+      </div>
+      <div class="ev-card">
+        <div class="ev-img" style="background:#e0f2fe">🏠<span class="ev-chip aprobado">Aprobado</span></div>
+        <div class="ev-body"><div class="ev-title">Foto del tejado antes de montaje en unidad 12B.</div><div class="ev-meta">Proyecto: <span>Instalación Complejo Residencial</span><br>Por: Mia Rodriguez · 11/2/2026</div></div>
+      </div>
+      <div class="ev-card">
+        <div class="ev-img" style="background:#fee2e2">🧱<span class="ev-chip rechazado">Rechazado</span></div>
+        <div class="ev-body"><div class="ev-title">Grieta superficial encontrada en muro exterior bloque B.</div><div class="ev-meta">Proyecto: <span>Instalación Complejo Residencial</span><br>Por: Mia Rodriguez · 9/2/2026</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MATERIALES ══ -->
+  <div class="screen" id="screen-materiales">
+    <div class="pg-head">
+      <div class="pg-title">Materiales</div>
+      <div class="pg-sub">Gestiona listas de materiales por tipo de obra.</div>
+    </div>
+    <div class="mat-wrap">
+      <div class="mat-card">
+        <div class="mat-head">
+          <div class="mat-title">Lista de Materiales</div>
+          <div class="mat-sub">Selecciona un tipo de obra para ver o editar.</div>
+        </div>
+        <div class="mat-sel-row">
+          <select class="mat-select" onchange="loadMat(this.value)">
+            <option value="">Tipo de obra...</option>
+            <option value="instalacion">Instalación Solar</option>
+            <option value="renovacion">Renovación Eléctrica</option>
+            <option value="mantenimiento">Mantenimiento General</option>
+          </select>
+        </div>
+        <div class="mat-table-wrap">
+          <table class="mat-table">
+            <thead><tr><th>Material</th><th>Cant.</th><th>Unidad</th><th>Obs.</th></tr></thead>
+            <tbody id="mat-body">
+              <tr><td colspan="4" class="mat-empty">Seleccione un tipo de obra para comenzar.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="mat-footer">
+          <button class="mat-add-btn" onclick="addMatRow()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Agregar Fila
+          </button>
+          <button class="btn-save">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/></svg>
+            Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ BOTTOM NAV ══ -->
+  <nav class="nav">
+    <div class="nav-item active" id="nav-dashboard" onclick="goTo('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Inicio
+    </div>
+    <div class="nav-item" id="nav-proyectos" onclick="goTo('proyectos')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+      Proyectos
+    </div>
+    <div class="nav-item" id="nav-grupos" onclick="goTo('grupos')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      Grupos
+    </div>
+    <div class="nav-item" id="nav-empleados" onclick="goTo('empleados')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Empleados
+    </div>
+    <div class="nav-item" id="nav-evidencias" onclick="goTo('evidencias')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      Evidencias
+    </div>
+    <div class="nav-item" id="nav-materiales" onclick="goTo('materiales')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+      Materiales
+    </div>
+  </nav>
+</div>
+
+<script>
+function goTo(section) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('screen-' + section).classList.add('active');
+  document.getElementById('nav-' + section).classList.add('active');
+}
+
+// Tabs
+document.querySelectorAll('.tabs, .ev-filter').forEach(group => {
+  group.querySelectorAll('.tab, .ev-f').forEach(t => {
+    t.addEventListener('click', () => {
+      group.querySelectorAll('.tab, .ev-f').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+    });
+  });
+});
+
+// Materiales
+const matDB = {
+  instalacion: [['Panel Solar 550W','200','pza','Garantía 25 años'],['Inversor 10kW','10','pza','Monofásico'],['Batería Litio 5kWh','50','pza','Ciclo profundo'],['Cable AWG 10','500','m','Uso intemperie']],
+  renovacion:  [['Cable THW 12','300','m','Calibre 12'],['Tablero 20 circuitos','5','pza','120/240V'],['Interruptor 15A','40','pza',''],['Canaleta PVC 2"','80','m','']],
+  mantenimiento:[['Pintura vinílica','20','cubeta','19 litros'],['Sellador acrílico','10','pza','Para grietas'],['Impermeabilizante','15','cubeta','19 litros']],
+};
+function loadMat(tipo) {
+  const tbody = document.getElementById('mat-body');
+  if (!tipo) { tbody.innerHTML='<tr><td colspan="4" class="mat-empty">Seleccione un tipo de obra para comenzar.</td></tr>'; return; }
+  tbody.innerHTML = (matDB[tipo]||[]).map(r=>`<tr>${r.map(v=>`<td><input class="mat-input" value="${v}"></td>`).join('')}</tr>`).join('');
+}
+function addMatRow() {
+  const tbody = document.getElementById('mat-body');
+  if (tbody.querySelector('.mat-empty')) tbody.innerHTML = '';
+  const tr = document.createElement('tr');
+  tr.innerHTML = ['Material...','0','pza','Obs...'].map(p=>`<td><input class="mat-input" placeholder="${p}"></td>`).join('');
+  tbody.appendChild(tr);
+  tr.querySelector('input').focus();
+}
+</script>
+</body>
+</html>
